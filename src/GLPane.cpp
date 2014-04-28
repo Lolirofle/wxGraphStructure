@@ -1,8 +1,6 @@
 #include "GLPane.hpp"
 
-extern "C"{
-	#include "gl.h"
-}
+#include "gl.hpp"
 
 wxBEGIN_EVENT_TABLE(GLPane,wxGLCanvas)
 	EVT_MOTION      (GLPane::mouseMoved)
@@ -62,12 +60,19 @@ void GLPane::render(wxPaintEvent& evt){
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glInit2D(0,0,getWidth(),getHeight());
+	glInit2D(0,0,getWidth(),getHeight(),251,248,244);
 	glLoadIdentity();
 
-	//White square
-	glColor4f(1.0f,1.0f,1.0f,1.0f);
-	glRectf(4.0f,4.0f,20.0f,20.0f);
+	const unsigned int nodeRadius = 25;
+	const float x = 32.0f,
+	            y = 48.0f;
+
+	//Nodes
+	glColor3ub(221,221,221);
+	glRectf(x-nodeRadius,y-nodeRadius,x+nodeRadius,y+nodeRadius);
+	glLineWidth(2);
+	glColor3ub(128,128,128);
+	glLineRect(x-nodeRadius,y-nodeRadius,x+nodeRadius,y+nodeRadius);
 
 	glFlush();
 	SwapBuffers();
