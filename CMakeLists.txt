@@ -1,0 +1,39 @@
+cmake_minimum_required(VERSION 2.8)
+
+project (wxGraphStructure)
+enable_language(C)
+enable_language(CXX)
+
+# Find all source and header files
+file(GLOB_RECURSE SOURCES "src/*.cpp" "src/*.c")
+file(GLOB_RECURSE HEADERS "src/*.hpp")
+
+set (INCLUDE_DIRS "src")
+
+include_directories(${INCLUDE_DIRS})
+
+SET(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -std=c11")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+
+ADD_DEFINITIONS(
+	-Wall
+)
+
+# Compile and assemble the executable with all found source files
+add_executable(wxGraphStructure ${SOURCES})
+
+# Find and use pkg-config
+find_package(PkgConfig REQUIRED)
+
+# OpenGL linking
+pkg_search_module(OPENGL REQUIRED gl)
+include_directories(${OPENGL_INCLUDE_DIRS})
+link_directories(${OPENGL_LIBRARY_DIRS})
+add_definitions(${OPENGL_DEFINITIONS})
+target_link_libraries(wxGraphStructure ${OPENGL_LIBRARIES})
+
+# Find and use wx-config
+set(wxWidgets_CONFIGURATION mswu)
+find_package(wxWidgets COMPONENTS core base gl REQUIRED)
+include(${wxWidgets_USE_FILE})
+target_link_libraries(wxGraphStructure ${wxWidgets_LIBRARIES})

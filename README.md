@@ -1,0 +1,4 @@
+wxGraphStructure
+================
+
+School project
