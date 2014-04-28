@@ -5,29 +5,31 @@
 #include <wx/glcanvas.h>
 
 class GLPane : public wxGLCanvas{
+private:
+	wxGLContext* m_context;
+
 public:
 	GLPane(wxFrame* parent,int* args);
 	virtual ~GLPane();
 
-	void resized(wxSizeEvent& evt);
+	void onWindowResize(wxSizeEvent& event);
 
 	int getWidth();
 	int getHeight();
 
 	void render(wxPaintEvent& evt);
+	
+	void onMouseMove(wxMouseEvent& event);
+	void onMouseLeftDown(wxMouseEvent& event);
+	void onMouseLeftUp(wxMouseEvent& event);
+	void onMouseRightDown(wxMouseEvent& event);
+	void onMouseRightUp(wxMouseEvent& event);
+	void onMouseWheel(wxMouseEvent& event);
+	void onMouseLeaveWindow(wxMouseEvent& event);
+	void onKeyDown(wxKeyEvent& event);
+	void onKeyUp(wxKeyEvent& event);
 
 private:
-    wxGLContext* m_context;
-	
-	void mouseMoved(wxMouseEvent& event);
-	void mouseDown(wxMouseEvent& event);
-	void mouseWheelMoved(wxMouseEvent& event);
-	void mouseReleased(wxMouseEvent& event);
-	void rightClick(wxMouseEvent& event);
-	void mouseLeftWindow(wxMouseEvent& event);
-	void keyPressed(wxKeyEvent& event);
-	void keyReleased(wxKeyEvent& event);
-
 	wxDECLARE_EVENT_TABLE();
 };
 #endif

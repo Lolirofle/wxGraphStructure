@@ -6,8 +6,13 @@ enable_language(CXX)
 
 # Options
 #   Usage: cmake -D<option name>=<value> <directory>
-option(C_LANG_VERSION   "c11")
-option(CXX_LANG_VERSION "c++11")
+if(NOT DEFINED C_LANG_VERSION)
+	set(C_LANG_VERSION   "c11")
+endif()
+
+if(NOT DEFINED CXX_LANG_VERSION)
+	set(CXX_LANG_VERSION "c++11")
+endif()
 
 # Find all source and header files
 file(GLOB_RECURSE SOURCES "src/*.cpp" "src/*.c")
@@ -17,7 +22,7 @@ set (INCLUDE_DIRS "src")
 
 include_directories(${INCLUDE_DIRS})
 
-SET(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -std=${C_LANG_VERSION}")
+SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=${C_LANG_VERSION}")
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=${CXX_LANG_VERSION}")
 
 ADD_DEFINITIONS(

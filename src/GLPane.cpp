@@ -3,28 +3,28 @@
 #include "gl.hpp"
 
 wxBEGIN_EVENT_TABLE(GLPane,wxGLCanvas)
-	EVT_MOTION      (GLPane::mouseMoved)
-	EVT_LEFT_DOWN   (GLPane::mouseDown)
-	EVT_LEFT_UP     (GLPane::mouseReleased)
-	EVT_RIGHT_DOWN  (GLPane::rightClick)
-	EVT_LEAVE_WINDOW(GLPane::mouseLeftWindow)
-	EVT_SIZE        (GLPane::resized)
-	EVT_KEY_DOWN    (GLPane::keyPressed)
-	EVT_KEY_UP      (GLPane::keyReleased)
-	EVT_MOUSEWHEEL  (GLPane::mouseWheelMoved)
+	EVT_MOTION      (GLPane::onMouseMove)
+	EVT_LEFT_DOWN   (GLPane::onMouseLeftDown)
+	EVT_LEFT_UP     (GLPane::onMouseLeftUp)
+	EVT_RIGHT_DOWN  (GLPane::onMouseRightDown)
+	EVT_RIGHT_UP    (GLPane::onMouseRightUp)
+	EVT_LEAVE_WINDOW(GLPane::onMouseLeaveWindow)
+	EVT_SIZE        (GLPane::onWindowResize)
+	EVT_KEY_DOWN    (GLPane::onKeyDown)
+	EVT_KEY_UP      (GLPane::onKeyUp)
+	EVT_MOUSEWHEEL  (GLPane::onMouseWheel)
 	EVT_PAINT       (GLPane::render)
 wxEND_EVENT_TABLE()
 
-
-// some useful events to use
-void GLPane::mouseMoved(wxMouseEvent& event){}
-void GLPane::mouseDown(wxMouseEvent& event){}
-void GLPane::mouseWheelMoved(wxMouseEvent& event){}
-void GLPane::mouseReleased(wxMouseEvent& event){}
-void GLPane::rightClick(wxMouseEvent& event){}
-void GLPane::mouseLeftWindow(wxMouseEvent& event){}
-void GLPane::keyPressed(wxKeyEvent& event){}
-void GLPane::keyReleased(wxKeyEvent& event){}
+void GLPane::onMouseMove(wxMouseEvent& event){}
+void GLPane::onMouseLeftDown(wxMouseEvent& event){}
+void GLPane::onMouseLeftUp(wxMouseEvent& event){}
+void GLPane::onMouseRightDown(wxMouseEvent& event){}
+void GLPane::onMouseRightUp(wxMouseEvent& event){}
+void GLPane::onMouseWheel(wxMouseEvent& event){}
+void GLPane::onMouseLeaveWindow(wxMouseEvent& event){}
+void GLPane::onKeyDown(wxKeyEvent& event){}
+void GLPane::onKeyUp(wxKeyEvent& event){}
 
 GLPane::GLPane(wxFrame* parent,int* args) : wxGLCanvas(parent,wxID_ANY,args,wxDefaultPosition,wxDefaultSize,wxFULL_REPAINT_ON_RESIZE){
 	m_context = new wxGLContext(this);
@@ -37,9 +37,7 @@ GLPane::~GLPane(){
 	delete m_context;
 }
 
-void GLPane::resized(wxSizeEvent& evt){
-//	wxGLCanvas::OnSize(evt);
-
+void GLPane::onWindowResize(wxSizeEvent& evt){
 	Refresh();
 }
 
