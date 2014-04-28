@@ -7,9 +7,12 @@
 class GLPane : public wxGLCanvas{
 private:
 	wxGLContext* m_context;
+	wxDECLARE_EVENT_TABLE();
+
+	void onRender(wxPaintEvent& event);
 
 public:
-	GLPane(wxFrame* parent,int* args);
+	GLPane(wxFrame* parent);
 	virtual ~GLPane();
 
 	void onWindowResize(wxSizeEvent& event);
@@ -17,19 +20,6 @@ public:
 	int getWidth();
 	int getHeight();
 
-	void render(wxPaintEvent& evt);
-	
-	void onMouseMove(wxMouseEvent& event);
-	void onMouseLeftDown(wxMouseEvent& event);
-	void onMouseLeftUp(wxMouseEvent& event);
-	void onMouseRightDown(wxMouseEvent& event);
-	void onMouseRightUp(wxMouseEvent& event);
-	void onMouseWheel(wxMouseEvent& event);
-	void onMouseLeaveWindow(wxMouseEvent& event);
-	void onKeyDown(wxKeyEvent& event);
-	void onKeyUp(wxKeyEvent& event);
-
-private:
-	wxDECLARE_EVENT_TABLE();
+	virtual void render(wxPaintEvent& event)=0;
 };
 #endif

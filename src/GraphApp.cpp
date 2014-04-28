@@ -1,7 +1,7 @@
 #include "GraphApp.hpp"
 
 #include "GraphFrame.hpp"
-#include "GLPane.hpp"
+#include "GraphNodePane.hpp"
 
 wxIMPLEMENT_APP(GraphApp);
 
@@ -11,9 +11,8 @@ bool GraphApp::OnInit(){
 
 	//Horizontal sizer layout
 	wxBoxSizer* sizer = new wxBoxSizer(wxHORIZONTAL);
-		int args[] = {WX_GL_RGBA,WX_GL_DOUBLEBUFFER,WX_GL_DEPTH_SIZE,16,0};
 		sizer->Add(
-			new GLPane(frame,args),
+			new GraphNodePane(frame),
 			true,
 			wxEXPAND
 		);
