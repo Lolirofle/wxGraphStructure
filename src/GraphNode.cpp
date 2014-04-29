@@ -8,8 +8,8 @@ void GraphNode::render(wxPaintEvent& event){
 	const unsigned int nodeRadius = 25;
 
 	glColor3ub(221,221,221);
-	glRectf(x-nodeRadius,y-nodeRadius,x+nodeRadius,y+nodeRadius);
+	glCircle(x,y,nodeRadius,nodeRadius/1.5,true);
 	glLineWidth(2);
 	glColor3ub(128,128,128);
-	glLineRect(x-nodeRadius,y-nodeRadius,x+nodeRadius,y+nodeRadius);
+	glCircle(x,y,nodeRadius,nodeRadius/1.5,false);
 }

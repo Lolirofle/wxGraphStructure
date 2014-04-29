@@ -20,7 +20,12 @@ wxBEGIN_EVENT_TABLE(GraphNodePane,GLPane)
 	EVT_MOUSEWHEEL  (GraphNodePane::onMouseWheel)
 wxEND_EVENT_TABLE()
 
-GraphNodePane::GraphNodePane(wxFrame* parent) : GLPane(parent),mouseDrag(false),mouseDragInitiationDistance(8),x(0.0f),y(0.0f),scale(1),minScale(1/16),maxScale(128){}
+GraphNodePane::GraphNodePane(wxFrame* parent) : GLPane(parent),mouseDrag(false),mouseDragInitiationDistance(8),x(0.0f),y(0.0f),scale(1),minScale(1/16),maxScale(128){
+	glEnable(GL_LINE_SMOOTH);
+	glEnable(GL_POLYGON_SMOOTH);
+	glHint(GL_LINE_SMOOTH_HINT,GL_NICEST);
+	glHint(GL_POLYGON_SMOOTH_HINT,GL_NICEST);
+}
 
 void GraphNodePane::onMouseLeftDown(wxMouseEvent& event){
 	mouseClickAbsolutePos = getMouseEventAbsolutePosition(event);
