@@ -1,6 +1,12 @@
 #include "GraphNodePane.hpp"
 
 #include "gl.hpp"
+#include <GraphNode.hpp>
+#include <GraphEdge.hpp>
+
+static bool position_inside(wxPoint a,wxPoint b,float radius){
+	return a.x > b.x-radius && a.x < b.x+radius && a.y > b.y-radius && a.y < b.y+radius;
+}
 
 wxBEGIN_EVENT_TABLE(GraphNodePane,GLPane)
 	EVT_MOTION      (GraphNodePane::onMouseMove)
@@ -14,11 +20,26 @@ wxBEGIN_EVENT_TABLE(GraphNodePane,GLPane)
 	EVT_MOUSEWHEEL  (GraphNodePane::onMouseWheel)
 wxEND_EVENT_TABLE()
 
+GraphNodePane::GraphNodePane(wxFrame* parent) : GLPane(parent),mouseDrag(false),mouseDragInitiationDistance(8),x(0.0f),y(0.0f),scale(1),minScale(1/16),maxScale(128){}
 
-GraphNodePane::GraphNodePane(wxFrame* parent) : GLPane(parent),x(0.0f),y(0.0f){}
+void GraphNodePane::onMouseLeftDown(wxMouseEvent& event){
+	mouseClickAbsolutePos = getMouseEventAbsolutePosition(event);
+	mouseClickType = GraphNodePane_MouseClickType::EMPTYSPACE;
+}
 
-void GraphNodePane::onMouseLeftDown(wxMouseEvent& event){}
-void GraphNodePane::onMouseLeftUp(wxMouseEvent& event){}
+void GraphNodePane::onMouseLeftUp(wxMouseEvent& event){
+	if(mouseClickType==GraphNodePane_MouseClickType::EMPTYSPACE && !mouseDrag){
+		wxPoint mouseCurrentPos = getMouseEventPosition(event);
+	
+		nodes.push_front(new GraphNode(mouseCurrentPos.x,mouseCurrentPos.y,"Label"));
+
+		Refresh();
+	}
+
+	mouseClickType = GraphNodePane_MouseClickType::NONE;
+	mouseDrag=false;
+}
+
 void GraphNodePane::onMouseRightDown(wxMouseEvent& event){}
 void GraphNodePane::onMouseRightUp(wxMouseEvent& event){}
 void GraphNodePane::onMouseWheel(wxMouseEvent& event){}
@@ -27,33 +48,42 @@ void GraphNodePane::onKeyDown(wxKeyEvent& event){}
 void GraphNodePane::onKeyUp(wxKeyEvent& event){}
 
 void GraphNodePane::onMouseMove(wxMouseEvent& event){
-	const wxPoint mouseCurrentPos = event.GetPosition();
+	const wxPoint mouseCurrentAbsolutePos = getMouseEventAbsolutePosition(event);
 
 	if(event.Dragging()){
-		moveView(mouseCurrentPos.x-mousePreviousPos.x,mouseCurrentPos.y-mousePreviousPos.y);
+		if(mouseDrag){
+			moveView(mouseCurrentAbsolutePos.x-mousePreviousAbsolutePos.x,mouseCurrentAbsolutePos.y-mousePreviousAbsolutePos.y);
+			Refresh();
+		}else{
+			if(!position_inside(mouseCurrentAbsolutePos,mouseClickAbsolutePos,mouseDragInitiationDistance))
+				mouseDrag=true;
+		}
 	}
 
-	mousePreviousPos = mouseCurrentPos;
-
-	Refresh();
+	mousePreviousAbsolutePos = mouseCurrentAbsolutePos;
 }
 
-void GraphNodePane::render(wxPaintEvent& evt){
-	const unsigned int nodeRadius = 25;
-	const float nodeX = 32.0f,
-	            nodeY = 48.0f;
-
+void GraphNodePane::render(wxPaintEvent& event){
 	glTranslatef(x,y,0.0f);
-		//Nodes
-		glColor3ub(221,221,221);
-		glRectf(nodeX-nodeRadius,nodeY-nodeRadius,nodeX+nodeRadius,nodeY+nodeRadius);
-		glLineWidth(2);
-		glColor3ub(128,128,128);
-		glLineRect(nodeX-nodeRadius,nodeY-nodeRadius,nodeX+nodeRadius,nodeY+nodeRadius);
+	for(auto node=nodes.begin(); node!=nodes.end(); ++node){
+		(*node)->render(event);
+	}
 	glTranslatef(-x,-y,0.0f);
 }
 
 void GraphNodePane::moveView(float x,float y){
 	this->x+=x;
 	this->y+=y;
+}
+
+wxPoint GraphNodePane::getMouseEventPosition(wxMouseEvent& event){
+	wxPoint pos = getMouseEventAbsolutePosition(event);
+	pos.x-=x;
+	pos.y-=y;
+
+	return pos;
+}
+
+wxPoint GraphNodePane::getMouseEventAbsolutePosition(wxMouseEvent& event){
+	return event.GetLogicalPosition(wxPaintDC(this));
 }
