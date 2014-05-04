@@ -3,18 +3,19 @@
 
 #include <list>
 #include <string>
-#include "Renderable.hpp"
+#include "wx.hpp"
 
 class GraphEdge;
 
-class GraphNode : public Renderable{
+class GraphNode{
 public:
-	float x,y;
+	wxPoint pos;
 	std::string label;
 	std::list<GraphEdge*> connections;
+	unsigned int radius;
 	
-	GraphNode(float x,float y,std::string label);
+	GraphNode(wxPoint pos,std::string label);
 
-	void render(wxPaintEvent& event);
+	void render(wxPaintEvent& event,bool selected=false);
 };
 #endif

@@ -2,14 +2,21 @@
 
 #include "gl.hpp"
 
-GraphNode::GraphNode(float x,float y,std::string label) : x(x),y(y),label(label){}
+GraphNode::GraphNode(wxPoint pos,std::string label) : pos(pos),label(label),radius(25){}
 
-void GraphNode::render(wxPaintEvent& event){
-	const unsigned int nodeRadius = 25;
-
-	glColor3ub(221,221,221);
-	glCircle(x,y,nodeRadius,nodeRadius/1.5,true);
+void GraphNode::render(wxPaintEvent& event,bool selected){
+	//Fill
+	if(selected)
+		glColor3ub(221,204,187);
+	else
+		glColor3ub(221,221,221);
+	glCircle(pos.x,pos.y,radius,radius,true);
+	
+	//Outline
 	glLineWidth(2);
-	glColor3ub(128,128,128);
-	glCircle(x,y,nodeRadius,nodeRadius/1.5,false);
+	if(selected)
+		glColor3ub(221,136,136);
+	else
+		glColor3ub(128,128,128);
+	glCircle(pos.x,pos.y,radius,radius,false);
 }

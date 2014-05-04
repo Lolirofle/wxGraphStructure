@@ -8,11 +8,63 @@
 class GraphNode;
 
 enum class GraphNodePane_MouseClickType{
+	/**
+	 * When no mouse click happened
+	 */
 	NONE,
-	NODE,
-	SELECTED,
-	SELECTIONS,
+
+	/**
+	 * When selecting a node
+	 */
+	SELECT_NODE,
+
+	/**
+	 * When selecting multiple nodes
+	 */
+	SELECT_NODES,
+	
+	/**
+	 * When reselecting the same node as the one already selected
+	 */
+	RESELECT_NODE,
+
+
+	/**
+	 * When selecting an edge
+	 */
+	SELECT_EDGE,
+
+	/**
+	 * When selecting multiple edges
+	 */
+	SELECT_EDGES,
+
+	/**
+	 * When clicked on empty space
+	 */
 	EMPTYSPACE
+};
+
+enum class GraphNodePane_MouseReleaseType{
+	/**
+	 * When deselecting a node
+	 */
+	DESELECT_NODE,
+
+	/**
+	 * When deselecting multiple selected nodes
+	 */
+	DESELECT_NODES,
+
+	/**
+	 * When deselecting an edge
+	 */
+	DESELECT_EDGE,
+
+	/**
+	 * When deselecting multiple selected edges
+	 */
+	DESELECT_EDGES
 };
 
 class GraphNodePane : public GLPane{
@@ -31,12 +83,17 @@ private:
 	float maxScale;
 
 	//Data
-	std::list<GraphNode*> nodes;
+	std::list<GraphNode*>& nodes;
+	GraphNode*& selectedNode;//Must be non NULL when mouseClickType==NODE
 
 	wxDECLARE_EVENT_TABLE();
 	
+protected:
+	GraphNode* getNodeAt(wxPoint pos);
+
 public:
-	GraphNodePane(wxFrame* parent);
+	GraphNodePane(wxFrame* parent,std::list<GraphNode*>& nodes,GraphNode*& selectedNode);
+	virtual ~GraphNodePane();
 
 	void render(wxPaintEvent& event);
 	
@@ -54,5 +111,8 @@ public:
 
 	wxPoint getMouseEventPosition(wxMouseEvent& event);
 	wxPoint getMouseEventAbsolutePosition(wxMouseEvent& event);
+
+	void zoomIn(float scaling,wxPoint center);
+	void zoomOut(float scaling,wxPoint center);
 };
 #endif
