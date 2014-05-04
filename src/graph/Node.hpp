@@ -3,20 +3,21 @@
 
 #include <list>
 #include <string>
-#include "Renderable.hpp"
+#include "../wx.hpp"
 
 namespace GraphStructure{
-	class GraphEdge;
+	class Edge;
 
-	class Node : public Renderable{
+	class Node{
 	public:
-		float x,y;
+		wxPoint pos;
 		std::string label;
-		std::list<GraphEdge*> connections;
+		std::list<Edge*> connections;
+		unsigned int radius;
 		
-		Node(float x,float y,std::string label);
+		Node(wxPoint pos,std::string label);
 
-		void render(wxPaintEvent& event);
+		void render(wxPaintEvent& event,bool selected=false)const;
 	};
 }
 

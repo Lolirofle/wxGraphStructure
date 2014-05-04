@@ -7,4 +7,6 @@
 #	include <wx/wx.h>
 #endif
 
+#include <wx/dataview.h>
+
 #endif

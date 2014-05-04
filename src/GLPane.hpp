@@ -17,8 +17,8 @@ public:
 
 	void onWindowResize(wxSizeEvent& event);
 
-	int getWidth();
-	int getHeight();
+	int getWidth()const;
+	int getHeight()const;
 
 	virtual void render(wxPaintEvent& event)=0;
 };

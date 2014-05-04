@@ -24,11 +24,11 @@ void GLPane::onWindowResize(wxSizeEvent& event){
 	Refresh();
 }
 
-int GLPane::getWidth(){
+int GLPane::getWidth()const{
 	return GetSize().x;
 }
 
-int GLPane::getHeight(){
+int GLPane::getHeight()const{
 	return GetSize().y;
 }
 

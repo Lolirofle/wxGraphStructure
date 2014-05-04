@@ -43,6 +43,6 @@ add_definitions(${OPENGL_DEFINITIONS})
 target_link_libraries(wxGraphStructure ${OPENGL_LIBRARIES})
 
 # Find and use wx-config
-find_package(wxWidgets COMPONENTS core base gl REQUIRED)
+find_package(wxWidgets COMPONENTS core base gl adv REQUIRED)
 include(${wxWidgets_USE_FILE})
 target_link_libraries(wxGraphStructure ${wxWidgets_LIBRARIES})

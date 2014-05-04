@@ -2,12 +2,20 @@
 #define __LOLIROFLE_WXGRAPHSTRUCTURE_GRAPH_FRAME_HPP_INCLUDED__
 
 #include "wx.hpp"
+#include "Node.hpp"
+#include "NodeStatus.hpp"
+#include "WindowViews.hpp"
+#include <list>
 
 namespace GraphStructure{
 	class Frame : public wxFrame{
 	public:
-		Frame(const wxSize& size);
+		Frame(const wxSize& size,NodeStatus& nodeStatus);
+
+		void setupLayout(const WindowViewContainer& viewContainer);
 	private:
+		NodeStatus& nodeStatus;
+		
 		//Defines various events of the application
 		void onNew   (wxCommandEvent& event);
 		void onOpen  (wxCommandEvent& event);
@@ -19,11 +27,15 @@ namespace GraphStructure{
 		wxDECLARE_EVENT_TABLE();
 	};
 
-	enum{
-		Frame_MenuID_FileNew,
-		Frame_MenuID_FileOpen,
-		Frame_MenuID_FileSave,
-		Frame_MenuID_FileSaveAs,
+	enum class Window_MenuID : int{
+		FileNew = 1,
+		FileOpen,
+		FileSave,
+		FileSaveAs,
+		
+		ViewNodeVis,
+		ViewInfo,
+		ViewNodeProp
 	};
 }
 
