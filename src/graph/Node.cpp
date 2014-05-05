@@ -1,5 +1,6 @@
 #include "Node.hpp"
 
+#include "Edge.hpp"
 #include "../gl.hpp"
 
 namespace GraphStructure{

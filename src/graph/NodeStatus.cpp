@@ -54,4 +54,9 @@ namespace GraphStructure{
 			nodes.pop_front();
 		}
 	}
+
+	void NodeStatus::connect(Node& from,Node& to){
+		//TODO: Implementation from NodeVisualizer key event
+	}
+
 }

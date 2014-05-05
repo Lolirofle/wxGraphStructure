@@ -23,6 +23,8 @@ namespace GraphStructure{
 		virtual void removeNode(Node* node);
 		virtual void removeAllNodesApply(void(*func)(Node*));
 
+		virtual void connect(Node& from,Node& to);
+
 		Node* getNodeAt(wxPoint pos);
 		bool isNodeSelected(Node* node)const;
 		bool isNodeSelected()const;

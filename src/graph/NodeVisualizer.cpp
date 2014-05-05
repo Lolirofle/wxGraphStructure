@@ -89,7 +89,19 @@ namespace GraphStructure{
 	}
 
 	void NodeVisualizer::onMouseLeaveWindow(wxMouseEvent& event){}
-	void NodeVisualizer::onKeyDown(wxKeyEvent& event){}
+	
+	void NodeVisualizer::onKeyDown(wxKeyEvent& event){
+		switch(event.GetKeyCode()){
+			case WXK_SPACE:
+				nodeStatus.getSelectedNodes().front()->connections.push_back(new Edge(*nodeStatus.getSelectedNodes().back()));
+				Refresh();
+				break;
+
+			default:
+				break;
+		}
+	}
+	
 	void NodeVisualizer::onKeyUp(wxKeyEvent& event){}
 
 	void NodeVisualizer::onMouseMove(wxMouseEvent& event){
@@ -130,6 +142,15 @@ namespace GraphStructure{
 
 		glTranslatef(x,y,0.0f);
 		glScalef(scale,scale,1.0f);
+
+		//Edges
+		for(auto node=nodeStatus.getNodes().begin(); node!=nodeStatus.getNodes().end(); ++node){
+			for(auto edge=(*node)->connections.begin(); edge!=(*node)->connections.end(); ++edge){
+				(*edge)->render(event,**node);
+			}
+		}
+
+		//Nodes
 		for(auto node=nodeStatus.getNodes().begin(); node!=nodeStatus.getNodes().end(); ++node){
 			(*node)->render(event,nodeStatus.isNodeSelected(*node));
 		}

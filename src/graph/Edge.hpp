@@ -2,6 +2,7 @@
 #define __LOLIROFLE_WXGRAPHSTRUCTURE_GRAPHEDGE_HPP_INCLUDED__
 
 #include <string>
+#include "../wx.hpp"
 
 namespace GraphStructure{
 	class Node;
@@ -13,9 +14,9 @@ namespace GraphStructure{
 		float weight;
 
 	public:
-		Edge(Node& to,std::string label,float weight=0.0f);
+		Edge(Node& to,std::string label="",float weight=0.0f);
 
-		void render(wxPaintEvent& event)const;
+		void render(wxPaintEvent& event,const Node& from)const;
 	};
 }
 
