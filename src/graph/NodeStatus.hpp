@@ -10,11 +10,11 @@ namespace GraphStructure{
 	class NodeStatus{
 	protected:
 		std::list<Node*> nodes;
-		Node* selectedNode;//Must be non NULL when mouseClickType==NODE
+		std::list<Node*> selectedNodes;//Must be non empty when mouseClickType==NODE
 
 	public:
-		std::list<Node*>& getNodes();
-		Node* getSelectedNode();
+		const std::list<Node*>& getNodes()const;
+		const std::list<Node*>& getSelectedNodes()const;
 		
 		virtual void selectNode(Node& node);
 		virtual void deselectNodes();

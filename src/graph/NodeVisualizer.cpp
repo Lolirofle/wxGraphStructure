@@ -7,7 +7,7 @@
 /**
  * Returns if point a is inside point b's radius
  */
-static bool position_inside(wxPoint a,wxPoint b,float radius){
+static bool point_insideRadius(wxPoint a,wxPoint b,float radius){
 	return a.x > b.x-radius && a.x < b.x+radius && a.y > b.y-radius && a.y < b.y+radius;
 }
 
@@ -39,14 +39,14 @@ namespace GraphStructure{
 		auto node = nodeStatus.getNodeAt(mouseClickPos);
 		if(node){
 			//When the selected node is the same as the to be selected node
-			if(nodeStatus.isNodeSelected(node))
+			if(nodeStatus.isNodeSelected(node)){
 				mouseClickType = NodeVisualizer_MouseClickType::RESELECT_NODE;
-				nodeStatus.deselectNodes();
-				nodeStatus.selectNode(*node);
-			else{
+			}else{
 				mouseClickType = NodeVisualizer_MouseClickType::SELECT_NODE;
-				nodeStatus.selectNode(*node);
 			}
+			if(!event.ShiftDown())
+				nodeStatus.deselectNodes();
+			nodeStatus.selectNode(*node);
 			Refresh();
 		}else{
 			mouseClickType = NodeVisualizer_MouseClickType::EMPTYSPACE;
@@ -105,7 +105,8 @@ namespace GraphStructure{
 					case NodeVisualizer_MouseClickType::SELECT_NODE:
 					case NodeVisualizer_MouseClickType::RESELECT_NODE:{
 						const wxPoint mouseCurrentPos = getMouseEventPosition(event);
-						nodeStatus.getSelectedNode()->pos = mouseCurrentPos;
+						//TODO: Implement moving all selected nodes
+						nodeStatus.getSelectedNodes().front()->pos = mouseCurrentPos;
 					}	break;
 
 					default:
@@ -113,7 +114,7 @@ namespace GraphStructure{
 				}
 				Refresh();
 			}else{
-				if(!position_inside(mouseCurrentAbsolutePos,mouseClickAbsolutePos,mouseDragInitiationDistance))
+				if(!point_insideRadius(mouseCurrentAbsolutePos,mouseClickAbsolutePos,mouseDragInitiationDistance))
 					mouseDrag=true;
 			}
 		}

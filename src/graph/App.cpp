@@ -8,9 +8,6 @@ wxIMPLEMENT_APP(GraphStructure::App);
 
 namespace GraphStructure{
 	bool App::OnInit(){
-		//Prepare nodes
-		selectedNode = NULL;
-
 		//Creates the frame
 		Frame *frame = new Frame(wxSize(450,340),*this);
 

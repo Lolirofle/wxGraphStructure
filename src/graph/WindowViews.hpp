@@ -19,6 +19,7 @@ namespace GraphStructure{
 	union WindowViewContainer{
 		wxWindow* views[WindowViews::length];
 		struct{
+			//TODO: Fix extensibility
 			NodeVisualizer* nodeVisualizer;
 			NodeProperties* nodeProperties;
 			wxWindow* information;
