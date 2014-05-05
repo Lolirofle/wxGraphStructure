@@ -39,13 +39,15 @@ namespace GraphStructure{
 		auto node = nodeStatus.getNodeAt(mouseClickPos);
 		if(node){
 			//When the selected node is the same as the to be selected node
-			if(nodeStatus.getSelectedNode()==node)
+			if(nodeStatus.isNodeSelected(node))
 				mouseClickType = NodeVisualizer_MouseClickType::RESELECT_NODE;
+				nodeStatus.deselectNodes();
+				nodeStatus.selectNode(*node);
 			else{
 				mouseClickType = NodeVisualizer_MouseClickType::SELECT_NODE;
 				nodeStatus.selectNode(*node);
-				Refresh();
 			}
+			Refresh();
 		}else{
 			mouseClickType = NodeVisualizer_MouseClickType::EMPTYSPACE;
 		}
@@ -59,7 +61,7 @@ namespace GraphStructure{
 			//If clicked at empty space
 			if(mouseClickType==NodeVisualizer_MouseClickType::EMPTYSPACE){
 				//If any node is selected
-				if(nodeStatus.getSelectedNode()){
+				if(nodeStatus.isNodeSelected()){
 					nodeStatus.deselectNodes();
 				}else{
 					wxPoint mouseCurrentPos = getMouseEventPosition(event);

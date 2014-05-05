@@ -42,6 +42,10 @@ namespace GraphStructure{
 		return node == selectedNode;
 	}
 
+	bool NodeStatus::isNodeSelected(Node* node)const{
+		return node!=NULL;
+	}
+
 	void NodeStatus::removeAllNodesApply(void(*func)(Node*)){
 		while(!getNodes().empty()){
 			func(getNodes().front());

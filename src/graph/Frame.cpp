@@ -86,20 +86,20 @@ namespace GraphStructure{
 		
 		wxBoxSizer* sizer = new wxBoxSizer(wxHORIZONTAL);
 			sizer->Add(
-				viewContainer.getView(WindowViews::NodeVisualizer),
+				viewContainer.views[WindowViews::NodeVisualizer],
 				true,
 				wxEXPAND
 			);
 
 			wxBoxSizer* sizerV = new wxBoxSizer(wxVERTICAL);
 				sizerV->Add(
-					viewContainer.getView(WindowViews::NodeProperties),
+					viewContainer.views[WindowViews::NodeProperties],
 					true,
 					wxEXPAND
 				);
 
 				sizerV->Add(
-					viewContainer.getView(WindowViews::Information),
+					viewContainer.views[WindowViews::Information],
 					/*Stretchable*/ true,
 					/*Flags      */ wxEXPAND | wxALL
 				);

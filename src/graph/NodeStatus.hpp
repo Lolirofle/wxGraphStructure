@@ -25,6 +25,7 @@ namespace GraphStructure{
 
 		Node* getNodeAt(wxPoint pos);
 		bool isNodeSelected(Node* node)const;
+		bool isNodeSelected()const;
 	};
 }
 

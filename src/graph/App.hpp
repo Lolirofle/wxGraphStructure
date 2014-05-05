@@ -9,8 +9,10 @@
 namespace GraphStructure{
 	class Node;
 
-	class App : public wxApp , public NodeStatus , public WindowViewContainer{
+	class App : public wxApp , public NodeStatus{
 	public:
+		WindowViewContainer views;
+
 		virtual bool OnInit();
 
 		std::list<Node*>& getNodes();

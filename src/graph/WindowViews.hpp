@@ -5,22 +5,24 @@
 #include "../wx.hpp"
 
 namespace GraphStructure{
-	enum class WindowViews : unsigned int{
+	class NodeVisualizer;
+	class NodeProperties;
+
+	namespace WindowViews{enum{
 		NodeVisualizer,
-		Information,
 		NodeProperties,
+		Information,
 
 		length
-	};
+	};}
 
-	class WindowViewContainer{
-	public:
-		std::array<wxWindow*,static_cast<unsigned int>(WindowViews::length)> views;
-
-		wxWindow* getView(WindowViews viewId)const;
-
-	protected:
-		void setView(WindowViews viewId,wxWindow* window);
+	union WindowViewContainer{
+		wxWindow* views[WindowViews::length];
+		struct{
+			NodeVisualizer* nodeVisualizer;
+			NodeProperties* nodeProperties;
+			wxWindow* information;
+		};
 	};
 }
 
