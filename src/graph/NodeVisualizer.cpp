@@ -22,6 +22,7 @@ namespace GraphStructure{
 		EVT_KEY_DOWN    (NodeVisualizer::onKeyDown)
 		EVT_KEY_UP      (NodeVisualizer::onKeyUp)
 		EVT_MOUSEWHEEL  (NodeVisualizer::onMouseWheel)
+		EVT_CONTEXT_MENU(NodeVisualizer::onContextMenu)
 	wxEND_EVENT_TABLE()
 
 	NodeVisualizer::NodeVisualizer(wxFrame* parent,NodeStatus& nodeStatus) : GLPane(parent),mouseDrag(false),mouseDragInitiationDistance(8),x(0.0f),y(0.0f),scale(1.0f),minScale(1/16),maxScale(128),nodeStatus(nodeStatus){}
@@ -75,7 +76,35 @@ namespace GraphStructure{
 		mouseClickType = NodeVisualizer_MouseClickType::NONE;
 	}
 
-	void NodeVisualizer::onMouseRightDown(wxMouseEvent& event){}
+	void NodeVisualizer::onMouseRightDown(wxMouseEvent& event){
+		const wxPoint mouseClickPos = getMouseEventPosition(event);
+		wxMenu menu;
+
+		//If clicked on node
+		auto node = nodeStatus.getNodeAt(mouseClickPos);
+		if(node){
+			menu.Append(1,"<Node>")->Enable(false);
+			menu.AppendSeparator();
+			menu.Append(2,"Remove");
+			menu.Append(3,"Connect to")->Enable(nodeStatus.isNodeSelected());
+			menu.AppendSeparator();
+			menu.Append(4,"Properties");
+			//menu.Connect(wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)NULL, NULL, this);
+		}else{
+			menu.Append(1,"<Graph>")->Enable(false);
+			menu.AppendSeparator();
+			menu.Append(2,"Add Node...");
+			menu.AppendSeparator();
+			menu.Append(4,"Copy")->Enable(nodeStatus.isNodeSelected());
+			menu.Append(5,"Cut")->Enable(nodeStatus.isNodeSelected());
+			menu.Append(6,"Paste")->Enable(nodeStatus.isNodeSelected());
+			menu.Append(7,"Select All");
+			menu.AppendSeparator();
+			menu.Append(8,"Properties");
+			//menu.Connect(wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)NULL, NULL, this);
+		}
+		PopupMenu(&menu);
+	}
 	void NodeVisualizer::onMouseRightUp(wxMouseEvent& event){}
 
 	void NodeVisualizer::onMouseWheel(wxMouseEvent& event){
@@ -97,8 +126,26 @@ namespace GraphStructure{
 				Refresh();
 				break;
 
-			default:
+			case WXK_DELETE:
+				//TODO: Removes all selected nodes
+				Refresh();
 				break;
+
+			default:
+				goto CheckCharCode;
+		}
+		return;
+
+		CheckCharCode:{
+			auto chr = event.GetUnicodeKey();
+
+			if(chr == '+'){
+				zoomIn(2,wxPoint(getWidth()/2.0f,getHeight()/2.0f));
+				Refresh();
+			}else if(chr == '-'){
+				zoomOut(2,wxPoint(getWidth()/2.0f,getHeight()/2.0f));
+				Refresh();
+			}
 		}
 	}
 	
@@ -132,6 +179,10 @@ namespace GraphStructure{
 		}
 
 		mousePreviousAbsolutePos = mouseCurrentAbsolutePos;
+	}
+
+	void NodeVisualizer::onContextMenu(wxContextMenuEvent& event){
+		
 	}
 
 	void NodeVisualizer::render(wxPaintEvent& event){

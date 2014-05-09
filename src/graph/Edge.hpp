@@ -12,9 +12,10 @@ namespace GraphStructure{
 		Node& to;
 		std::string label;
 		float weight;
+		unsigned int count;
 
 	public:
-		Edge(Node& to,std::string label="",float weight=0.0f);
+		Edge(Node& to,std::string label="",float weight=0.0f,unsigned int count=1);
 
 		void render(wxPaintEvent& event,const Node& from)const;
 	};

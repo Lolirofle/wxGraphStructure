@@ -107,6 +107,7 @@ namespace GraphStructure{
 		void onMouseLeaveWindow(wxMouseEvent& event);
 		void onKeyDown(wxKeyEvent& event);
 		void onKeyUp(wxKeyEvent& event);
+		void onContextMenu(wxContextMenuEvent& event);
 
 		void moveView(float x,float y);
 
