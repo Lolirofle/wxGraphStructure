@@ -23,13 +23,49 @@ namespace GraphStructure{
 		EVT_KEY_UP      (NodeVisualizer::onKeyUp)
 		EVT_MOUSEWHEEL  (NodeVisualizer::onMouseWheel)
 		EVT_CONTEXT_MENU(NodeVisualizer::onContextMenu)
+		EVT_MENU        (NodeVisualizer_ContextMenuID::NodeRemove                 ,NodeVisualizer::onNodeContextMenuRemove)
+		EVT_MENU        (NodeVisualizer_ContextMenuID::NodeConnectToThisFromSelect,NodeVisualizer::onNodeContextMenuConnectToThisFromSelect)
+		EVT_MENU        (NodeVisualizer_ContextMenuID::NodeConnectToSelectFromThis,NodeVisualizer::onNodeContextMenuConnectToSelectFromThis)
+		EVT_MENU        (NodeVisualizer_ContextMenuID::NodeConnectChooseFromList  ,NodeVisualizer::onNodeContextMenuConnectChooseFromList)
 	wxEND_EVENT_TABLE()
 
-	NodeVisualizer::NodeVisualizer(wxFrame* parent,NodeStatus& nodeStatus) : GLPane(parent),mouseDrag(false),mouseDragInitiationDistance(8),x(0.0f),y(0.0f),scale(1.0f),minScale(1/16),maxScale(128),nodeStatus(nodeStatus){}
+	NodeVisualizer::NodeVisualizer(wxFrame* parent,NodeStatus& nodeStatus) : GLPane(parent),mouseDrag(false),mouseDragInitiationDistance(8),x(0.0f),y(0.0f),scale(1.0f),minScale(1/16),maxScale(128),nodeStatus(nodeStatus){
+		contextMenuGraph = new wxMenu;
+			contextMenuGraph->Append         (NodeVisualizer_ContextMenuID::Unknown        ,"<Graph>"    )->Enable(false);
+			contextMenuGraph->AppendSeparator();
+			contextMenuGraph->Append         (NodeVisualizer_ContextMenuID::GraphAddNode   ,"Add Node...");
+			contextMenuGraph->AppendSeparator();
+			contextMenuGraph->Append         (NodeVisualizer_ContextMenuID::GraphCopy      ,"Copy"       )->Enable(nodeStatus.isNodeSelected());
+			contextMenuGraph->Append         (NodeVisualizer_ContextMenuID::GraphCut       ,"Cut"        )->Enable(nodeStatus.isNodeSelected());
+			contextMenuGraph->Append         (NodeVisualizer_ContextMenuID::GraphPaste     ,"Paste"      )->Enable(nodeStatus.isNodeSelected());
+			//contextMenuGraph->Append         (NodeVisualizer_ContextMenuID::GraphRemove    ,"Ŕemove"     )->Enable(nodeStatus.isNodeSelected());
+			contextMenuGraph->Append         (NodeVisualizer_ContextMenuID::GraphSelectAll ,"Select All" );
+			contextMenuGraph->AppendSeparator();
+			contextMenuGraph->Append         (NodeVisualizer_ContextMenuID::GraphProperties,"Properties" );
+
+		contextMenuNodeConnect = new wxMenu;
+			contextMenuNodeConnect->Append(NodeVisualizer_ContextMenuID::NodeConnectToThisFromSelect,"To this from selection")->Enable(nodeStatus.isNodeSelected());
+			contextMenuNodeConnect->Append(NodeVisualizer_ContextMenuID::NodeConnectToSelectFromThis,"To selection from this")->Enable(nodeStatus.isNodeSelected());
+			contextMenuNodeConnect->Append(NodeVisualizer_ContextMenuID::NodeConnectChooseFromList  ,"Choose from list...");
+
+		contextMenuNode = new wxMenu;
+			contextMenuNode->Append         (NodeVisualizer_ContextMenuID::Unknown        ,"<Node>"     )->Enable(false);
+			contextMenuNode->AppendSeparator();
+			contextMenuNode->Append         (NodeVisualizer_ContextMenuID::NodeRemove     ,"Remove"     );
+			contextMenuNode->AppendSubMenu  (contextMenuNodeConnect,"Connect...");
+			contextMenuNode->AppendSeparator();
+			contextMenuNode->Append         (NodeVisualizer_ContextMenuID::NodeProperties ,"Properties" );
+			//menu.Connect(wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)NULL,NULL,this);
+	}
 
 	NodeVisualizer::~NodeVisualizer(){
 		//Free all allocated nodes
 		nodeStatus.removeAllNodesApply([](Node* node){delete node;});
+
+		//Free menus
+		delete contextMenuGraph;
+		delete contextMenuNodeConnect;
+		delete contextMenuNode;
 	}
 
 	void NodeVisualizer::onMouseLeftDown(wxMouseEvent& event){
@@ -52,6 +88,8 @@ namespace GraphStructure{
 		}else{
 			mouseClickType = NodeVisualizer_MouseClickType::EMPTYSPACE;
 		}
+
+		event.Skip();
 	}
 
 	void NodeVisualizer::onMouseLeftUp(wxMouseEvent& event){
@@ -74,38 +112,26 @@ namespace GraphStructure{
 		}
 
 		mouseClickType = NodeVisualizer_MouseClickType::NONE;
+
+		event.Skip();
 	}
 
 	void NodeVisualizer::onMouseRightDown(wxMouseEvent& event){
 		const wxPoint mouseClickPos = getMouseEventPosition(event);
-		wxMenu menu;
-
+	
 		//If clicked on node
 		auto node = nodeStatus.getNodeAt(mouseClickPos);
-		if(node){
-			menu.Append(1,"<Node>")->Enable(false);
-			menu.AppendSeparator();
-			menu.Append(2,"Remove");
-			menu.Append(3,"Connect to")->Enable(nodeStatus.isNodeSelected());
-			menu.AppendSeparator();
-			menu.Append(4,"Properties");
-			//menu.Connect(wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)NULL, NULL, this);
-		}else{
-			menu.Append(1,"<Graph>")->Enable(false);
-			menu.AppendSeparator();
-			menu.Append(2,"Add Node...");
-			menu.AppendSeparator();
-			menu.Append(4,"Copy")->Enable(nodeStatus.isNodeSelected());
-			menu.Append(5,"Cut")->Enable(nodeStatus.isNodeSelected());
-			menu.Append(6,"Paste")->Enable(nodeStatus.isNodeSelected());
-			menu.Append(7,"Select All");
-			menu.AppendSeparator();
-			menu.Append(8,"Properties");
-			//menu.Connect(wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)NULL, NULL, this);
-		}
-		PopupMenu(&menu);
+		if(node)
+			PopupMenu(contextMenuNode);
+		else
+			PopupMenu(contextMenuGraph);
+
+		event.Skip();
 	}
-	void NodeVisualizer::onMouseRightUp(wxMouseEvent& event){}
+
+	void NodeVisualizer::onMouseRightUp(wxMouseEvent& event){
+		event.Skip();
+	}
 
 	void NodeVisualizer::onMouseWheel(wxMouseEvent& event){
 		if(event.GetWheelAxis()==wxMOUSE_WHEEL_VERTICAL){//TODO: Only takes care of one step at a time
@@ -115,9 +141,13 @@ namespace GraphStructure{
 				zoomOut(2.0f,wxPoint(getWidth()/2.0f,getHeight()/2.0f));
 			Refresh();
 		}
+
+		event.Skip();
 	}
 
-	void NodeVisualizer::onMouseLeaveWindow(wxMouseEvent& event){}
+	void NodeVisualizer::onMouseLeaveWindow(wxMouseEvent& event){
+		event.Skip();
+	}
 	
 	void NodeVisualizer::onKeyDown(wxKeyEvent& event){
 		switch(event.GetKeyCode()){
@@ -127,14 +157,25 @@ namespace GraphStructure{
 				break;
 
 			case WXK_DELETE:
-				//TODO: Removes all selected nodes
+				if(!nodeStatus.isNodeSelected())
+					break;
+
+				//Remove all selected nodes
+				for(auto node=nodeStatus.getSelectedNodes().begin(); node!=nodeStatus.getSelectedNodes().end(); ++node){
+					delete *node;
+					nodeStatus.removeNode(*node);
+				}
+
+				//Deselect the removed nodes
+				nodeStatus.deselectNodes();
+
 				Refresh();
 				break;
 
 			default:
 				goto CheckCharCode;
 		}
-		return;
+		goto End;
 
 		CheckCharCode:{
 			auto chr = event.GetUnicodeKey();
@@ -147,9 +188,14 @@ namespace GraphStructure{
 				Refresh();
 			}
 		}
+
+		End:
+		event.Skip();
 	}
 	
-	void NodeVisualizer::onKeyUp(wxKeyEvent& event){}
+	void NodeVisualizer::onKeyUp(wxKeyEvent& event){
+		event.Skip();
+	}
 
 	void NodeVisualizer::onMouseMove(wxMouseEvent& event){
 		const wxPoint mouseCurrentAbsolutePos = getMouseEventAbsolutePosition(event);
@@ -179,10 +225,28 @@ namespace GraphStructure{
 		}
 
 		mousePreviousAbsolutePos = mouseCurrentAbsolutePos;
+
+		event.Skip();
 	}
 
 	void NodeVisualizer::onContextMenu(wxContextMenuEvent& event){
-		
+		event.Skip();
+	}
+
+	void NodeVisualizer::onNodeContextMenuRemove(wxCommandEvent& event){
+
+	}
+
+	void NodeVisualizer::onNodeContextMenuConnectToThisFromSelect(wxCommandEvent& event){
+		std::cout<<"CONNECT TO THIS FROM SELECT"<<std::endl;
+	}
+
+	void NodeVisualizer::onNodeContextMenuConnectToSelectFromThis(wxCommandEvent& event){
+		std::cout<<"CONNECT TO SELECT FROM THIS"<<std::endl;
+	}
+
+	void NodeVisualizer::onNodeContextMenuConnectChooseFromList(wxCommandEvent& event){
+		std::cout<<"CONNECT CHOOSE FROM LIST"<<std::endl;
 	}
 
 	void NodeVisualizer::render(wxPaintEvent& event){
