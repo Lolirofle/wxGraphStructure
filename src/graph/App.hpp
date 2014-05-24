@@ -12,19 +12,18 @@ namespace GraphStructure{
 	class App : public wxApp , public NodeStatus{
 	public:
 		WindowViewContainer views;
+		bool modified;
 
 		virtual bool OnInit();
-
-		std::list<Node*>& getNodes();
-		Node* getSelectedNode();
 		
+		virtual bool isModified()const;
+	
 		virtual void selectNode(Node& node);
 		virtual void deselectNodes();
-
-		virtual void addNode(Node* node);
-		virtual void removeNode(Node* node);
-	
-		virtual void removeAllNodesApply(void(*func)(Node*));
+		virtual void addNode(Node node);
+		virtual void removeNode(const Node* node);
+		virtual void removeAllNodes();
+		virtual void connect(Node& from,Node& to);
 	};
 }
 

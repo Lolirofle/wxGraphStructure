@@ -4,6 +4,7 @@
 #include <list>
 #include <string>
 #include "../wx.hpp"
+#include "Edge.hpp"
 
 namespace GraphStructure{
 	class Edge;
@@ -12,7 +13,7 @@ namespace GraphStructure{
 	public:
 		wxPoint pos;
 		std::string label;
-		std::list<Edge*> connections;
+		std::list<Edge> connections;
 		unsigned int radius;
 		
 		Node(wxPoint pos,std::string label);

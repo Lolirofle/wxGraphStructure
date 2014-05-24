@@ -16,6 +16,12 @@ namespace GraphStructure{
 	private:
 		NodeStatus& nodeStatus;
 		
+		/**
+		 * @return True  => Proceed
+		 *         False => Cancel
+		 */
+		bool showSaveConfirmation();
+
 		//Defines various events of the application
 		void onNew   (wxCommandEvent& event);
 		void onOpen  (wxCommandEvent& event);

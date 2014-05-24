@@ -1,5 +1,6 @@
 #include "Frame.hpp"
 
+#include <wx/wfstream.h>
 #include "defs.h"
 #include "NodeVisualizer.hpp"
 
@@ -112,8 +113,29 @@ namespace GraphStructure{
 		SetAutoLayout(true);
 	}
 
+	bool Frame::showSaveConfirmation(){
+		if(nodeStatus.isModified()){
+			switch(wxMessageBox("Save changes to the current graph before closing?","Save confirmation",wxICON_EXCLAMATION | wxYES_NO | wxCANCEL, this)){
+				//Save before continuing
+				case wxYES:
+					//TODO: Frame::save() function with nodeStatus.exportFile();
+
+				//Continue
+				case wxNO:
+					return true;
+
+				//Unknown response or cancelled action
+				//case wxCANCEL:
+				default:
+					return false;
+			}
+		}
+		return true;
+	}
+
 	void Frame::onExit(wxCommandEvent& event){
-		Close(true);
+		if(showSaveConfirmation())
+			Close(true);
 	}
 
 	void Frame::onAbout(wxCommandEvent& event){
@@ -131,9 +153,43 @@ namespace GraphStructure{
 	}
 
 	void Frame::onNew   (wxCommandEvent& event){
-		nodeStatus.removeAllNodesApply([](Node* node){delete node;});
+		if(showSaveConfirmation())
+			nodeStatus.removeAllNodes();
 	}
-	void Frame::onOpen  (wxCommandEvent& event){}
+
+	void Frame::onOpen  (wxCommandEvent& event){
+		if(!showSaveConfirmation())
+			return;
+
+		//Initiate file dialog
+		wxFileDialog fileDialog(this,"Open graph","","","Graph Structure graph data (*.gsg)|*.gsg|All files (*)|*",wxFD_OPEN|wxFD_FILE_MUST_EXIST);
+
+		if(fileDialog.ShowModal()==wxID_CANCEL)
+			return;
+		/*
+		//Load chosen file
+		wxFileInputStream inputStream(fileDialog.GetPath());
+		
+		if(!inputStream.IsOk()){
+			wxLogError("Cannot open file '%s'.",fileDialog.GetPath());
+			return;
+		}*/
+	}
+
 	void Frame::onSave  (wxCommandEvent& event){}
-	void Frame::onSaveAs(wxCommandEvent& event){}
+	void Frame::onSaveAs(wxCommandEvent& event){
+		wxFileDialog saveDialog(this,"Save graph", "", "","Graph Structure graph data (*.gsg)|*.gsg",wxFD_SAVE|wxFD_OVERWRITE_PROMPT);
+		
+		if(saveDialog.ShowModal()==wxID_CANCEL)
+			return;
+
+		/*
+		//Save current graph to file
+		wxFileOutputStream outputStream(saveDialog.GetPath());
+
+		if(!outputStream.IsOk()){
+			wxLogError("Cannot save to file '%s'.",saveDialog.GetPath());
+			return;
+		}*/
+	}
 }

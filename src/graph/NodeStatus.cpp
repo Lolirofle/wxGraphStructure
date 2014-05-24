@@ -4,7 +4,7 @@
 #include "Node.hpp"
 
 namespace GraphStructure{
-	const std::list<Node*>& NodeStatus::getNodes()const{
+	const std::list<Node>& NodeStatus::getNodes()const{
 		return nodes;
 	}
 
@@ -22,41 +22,37 @@ namespace GraphStructure{
 	}
 	
 	Node* NodeStatus::getNodeAt(wxPoint pos){
-		for(auto node=getNodes().begin(); node!=getNodes().end(); ++node){
-			if(hypot((*node)->pos.x - pos.x,(*node)->pos.y - pos.y) < (*node)->radius){
-				return *node;
+		for(auto node=nodes.begin(); node!=nodes.end(); ++node){
+			if(hypot(node->pos.x - pos.x,node->pos.y - pos.y) < node->radius){
+				return &*node;
 			}
 		}
 		return NULL;
 	}
 
-	void NodeStatus::addNode(Node* node){
-		if(node)
-			nodes.push_back(node);
+	void NodeStatus::addNode(Node node){
+		nodes.push_back(node);
 	}
 
-	void NodeStatus::removeNode(Node* node){
-		if(node)
-			nodes.remove(node);
+	void NodeStatus::removeNode(const Node* node){
+		nodes.remove_if([node](const Node& i){
+			return &i == node;
+		});
 	}
 
-	bool NodeStatus::isNodeSelected(Node* node)const{
+	bool NodeStatus::isNodeSelected(const Node* node)const{
 		return std::find(std::begin(getSelectedNodes()),std::end(getSelectedNodes()),node) != std::end(getSelectedNodes());
 	}
 
-	bool NodeStatus::isNodeSelected()const{
+	bool NodeStatus::hasNodeSelected()const{
 		return !getSelectedNodes().empty();
 	}
 
-	void NodeStatus::removeAllNodesApply(void(*func)(Node*)){
-		while(!nodes.empty()){
-			func(nodes.front());
-			nodes.pop_front();
-		}
+	void NodeStatus::removeAllNodes(){
+		nodes.clear();
 	}
 
 	void NodeStatus::connect(Node& from,Node& to){
 		//TODO: Implementation from NodeVisualizer key event
 	}
-
 }

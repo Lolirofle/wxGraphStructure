@@ -24,24 +24,41 @@ namespace GraphStructure{
 		return true;
 	}
 
-	void App::addNode(Node* node){
-		NodeStatus::addNode(node);
-	}
-
-	void App::removeNode(Node* node){
-		NodeStatus::removeNode(node);
+	bool App::isModified()const{
+		return modified;
 	}
 
 	void App::selectNode(Node& node){
 		views.nodeProperties->showNode(node);
 		NodeStatus::selectNode(node);
+		views.nodeVisualizer->Refresh();
 	}
 
 	void App::deselectNodes(){
 		NodeStatus::deselectNodes();
+		views.nodeVisualizer->Refresh();
 	}
 
-	void App::removeAllNodesApply(void(*func)(Node*)){
-		NodeStatus::removeAllNodesApply(func);
+	void App::addNode(Node node){
+		modified = true;
+		NodeStatus::addNode(node);
+		views.nodeVisualizer->Refresh();
+	}
+
+	void App::removeNode(const Node* node){
+		modified = true;
+		NodeStatus::removeNode(node);
+		views.nodeVisualizer->Refresh();
+	}
+
+	void App::removeAllNodes(){
+		modified = true;
+		NodeStatus::removeAllNodes();
+		views.nodeVisualizer->Refresh();
+	}
+
+	void App::connect(Node& from,Node& to){
+		NodeStatus::connect(from,to);
+		views.nodeVisualizer->Refresh();
 	}
 }

@@ -9,25 +9,29 @@ namespace GraphStructure{
 	
 	class NodeStatus{
 	protected:
-		std::list<Node*> nodes;
+		std::list<Node> nodes;
 		std::list<Node*> selectedNodes;//Must be non empty when mouseClickType==NODE
 
 	public:
-		const std::list<Node*>& getNodes()const;
+		void init();
+
+		const std::list<Node>& getNodes()const;
 		const std::list<Node*>& getSelectedNodes()const;
 		
 		virtual void selectNode(Node& node);
 		virtual void deselectNodes();
 
-		virtual void addNode(Node* node);
-		virtual void removeNode(Node* node);
-		virtual void removeAllNodesApply(void(*func)(Node*));
+		virtual void addNode(Node node);
+		virtual void removeNode(const Node* node);
+		virtual void removeAllNodes();
 
 		virtual void connect(Node& from,Node& to);
 
 		Node* getNodeAt(wxPoint pos);
-		bool isNodeSelected(Node* node)const;
-		bool isNodeSelected()const;
+		bool isNodeSelected(const Node* node)const;//Compares pointers
+		bool hasNodeSelected()const;
+
+		virtual bool isModified()const=0;
 	};
 }
 

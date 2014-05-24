@@ -35,17 +35,17 @@ namespace GraphStructure{
 			contextMenuGraph->AppendSeparator();
 			contextMenuGraph->Append         (NodeVisualizer_ContextMenuID::GraphAddNode   ,"Add Node...");
 			contextMenuGraph->AppendSeparator();
-			contextMenuGraph->Append         (NodeVisualizer_ContextMenuID::GraphCopy      ,"Copy"       )->Enable(nodeStatus.isNodeSelected());
-			contextMenuGraph->Append         (NodeVisualizer_ContextMenuID::GraphCut       ,"Cut"        )->Enable(nodeStatus.isNodeSelected());
-			contextMenuGraph->Append         (NodeVisualizer_ContextMenuID::GraphPaste     ,"Paste"      )->Enable(nodeStatus.isNodeSelected());
-			//contextMenuGraph->Append         (NodeVisualizer_ContextMenuID::GraphRemove    ,"Ŕemove"     )->Enable(nodeStatus.isNodeSelected());
+			contextMenuGraph->Append         (NodeVisualizer_ContextMenuID::GraphCopy      ,"Copy"       )->Enable(nodeStatus.hasNodeSelected());
+			contextMenuGraph->Append         (NodeVisualizer_ContextMenuID::GraphCut       ,"Cut"        )->Enable(nodeStatus.hasNodeSelected());
+			contextMenuGraph->Append         (NodeVisualizer_ContextMenuID::GraphPaste     ,"Paste"      )->Enable(nodeStatus.hasNodeSelected());
+			//contextMenuGraph->Append         (NodeVisualizer_ContextMenuID::GraphRemove    ,"Ŕemove"     )->Enable(nodeStatus.hasNodeSelected());
 			contextMenuGraph->Append         (NodeVisualizer_ContextMenuID::GraphSelectAll ,"Select All" );
 			contextMenuGraph->AppendSeparator();
 			contextMenuGraph->Append         (NodeVisualizer_ContextMenuID::GraphProperties,"Properties" );
 
 		contextMenuNodeConnect = new wxMenu;
-			contextMenuNodeConnect->Append(NodeVisualizer_ContextMenuID::NodeConnectToThisFromSelect,"To this from selection")->Enable(nodeStatus.isNodeSelected());
-			contextMenuNodeConnect->Append(NodeVisualizer_ContextMenuID::NodeConnectToSelectFromThis,"To selection from this")->Enable(nodeStatus.isNodeSelected());
+			contextMenuNodeConnect->Append(NodeVisualizer_ContextMenuID::NodeConnectToThisFromSelect,"To this from selection")->Enable(nodeStatus.hasNodeSelected());
+			contextMenuNodeConnect->Append(NodeVisualizer_ContextMenuID::NodeConnectToSelectFromThis,"To selection from this")->Enable(nodeStatus.hasNodeSelected());
 			contextMenuNodeConnect->Append(NodeVisualizer_ContextMenuID::NodeConnectChooseFromList  ,"Choose from list...");
 
 		contextMenuNode = new wxMenu;
@@ -60,12 +60,16 @@ namespace GraphStructure{
 
 	NodeVisualizer::~NodeVisualizer(){
 		//Free all allocated nodes
-		nodeStatus.removeAllNodesApply([](Node* node){delete node;});
+		nodeStatus.removeAllNodes();
 
 		//Free menus
 		delete contextMenuGraph;
-		delete contextMenuNodeConnect;
 		delete contextMenuNode;
+
+		//Free submenus
+		/*This is freed when the menus are freed?
+		delete contextMenuNodeConnect;
+		*/
 	}
 
 	void NodeVisualizer::onMouseLeftDown(wxMouseEvent& event){
@@ -84,7 +88,6 @@ namespace GraphStructure{
 			if(!event.ShiftDown())
 				nodeStatus.deselectNodes();
 			nodeStatus.selectNode(*node);
-			Refresh();
 		}else{
 			mouseClickType = NodeVisualizer_MouseClickType::EMPTYSPACE;
 		}
@@ -100,14 +103,13 @@ namespace GraphStructure{
 			//If clicked at empty space
 			if(mouseClickType==NodeVisualizer_MouseClickType::EMPTYSPACE){
 				//If any node is selected
-				if(nodeStatus.isNodeSelected()){
+				if(nodeStatus.hasNodeSelected()){
 					nodeStatus.deselectNodes();
 				}else{
 					wxPoint mouseCurrentPos = getMouseEventPosition(event);
 					//Create new node at mouse position
-					nodeStatus.addNode(new Node(mouseCurrentPos,"Label"));
+					nodeStatus.addNode(Node(mouseCurrentPos,"Label"));
 				}
-				Refresh();
 			}
 		}
 
@@ -152,24 +154,22 @@ namespace GraphStructure{
 	void NodeVisualizer::onKeyDown(wxKeyEvent& event){
 		switch(event.GetKeyCode()){
 			case WXK_SPACE:
-				nodeStatus.getSelectedNodes().front()->connections.push_back(new Edge(*nodeStatus.getSelectedNodes().back()));
+				nodeStatus.getSelectedNodes().front()->connections.push_back(Edge(*nodeStatus.getSelectedNodes().back()));
 				Refresh();
 				break;
 
 			case WXK_DELETE:
-				if(!nodeStatus.isNodeSelected())
+				if(!nodeStatus.hasNodeSelected())
 					break;
 
 				//Remove all selected nodes
 				for(auto node=nodeStatus.getSelectedNodes().begin(); node!=nodeStatus.getSelectedNodes().end(); ++node){
-					delete *node;
 					nodeStatus.removeNode(*node);
 				}
 
 				//Deselect the removed nodes
 				nodeStatus.deselectNodes();
 
-				Refresh();
 				break;
 
 			default:
@@ -260,14 +260,14 @@ namespace GraphStructure{
 
 		//Edges
 		for(auto node=nodeStatus.getNodes().begin(); node!=nodeStatus.getNodes().end(); ++node){
-			for(auto edge=(*node)->connections.begin(); edge!=(*node)->connections.end(); ++edge){
-				(*edge)->render(event,**node);
+			for(auto edge=node->connections.begin(); edge!=node->connections.end(); ++edge){
+				edge->render(event,*node);
 			}
 		}
 
 		//Nodes
 		for(auto node=nodeStatus.getNodes().begin(); node!=nodeStatus.getNodes().end(); ++node){
-			(*node)->render(event,nodeStatus.isNodeSelected(*node));
+			node->render(event,nodeStatus.isNodeSelected(&*node));
 		}
 		glScalef(1.0f/scale,1.0f/scale,1.0f);
 		glTranslatef(-x,-y,0.0f);
