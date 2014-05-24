@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include "Node.hpp"
+#include "Edge.hpp"
 
 namespace GraphStructure{
 	const std::list<Node>& NodeStatus::getNodes()const{
@@ -15,6 +16,13 @@ namespace GraphStructure{
 	void NodeStatus::selectNode(Node& node){
 		if(!isNodeSelected(&node))
 			selectedNodes.push_back(&node);
+	}
+
+	void NodeStatus::selectNodes(){
+		deselectNodes();
+		for(auto node=nodes.begin(); node!=nodes.end(); ++node){
+			selectedNodes.push_back(&*node);
+		}
 	}
 
 	void NodeStatus::deselectNodes(){
@@ -52,7 +60,7 @@ namespace GraphStructure{
 		nodes.clear();
 	}
 
-	void NodeStatus::connect(Node& from,Node& to){
-		//TODO: Implementation from NodeVisualizer key event
+	void NodeStatus::connect(Node& from,Edge edge){
+		from.connections.push_back(edge);
 	}
 }

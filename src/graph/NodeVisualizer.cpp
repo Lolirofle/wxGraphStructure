@@ -27,6 +27,7 @@ namespace GraphStructure{
 		EVT_MENU        (NodeVisualizer_ContextMenuID::NodeConnectToThisFromSelect,NodeVisualizer::onNodeContextMenuConnectToThisFromSelect)
 		EVT_MENU        (NodeVisualizer_ContextMenuID::NodeConnectToSelectFromThis,NodeVisualizer::onNodeContextMenuConnectToSelectFromThis)
 		EVT_MENU        (NodeVisualizer_ContextMenuID::NodeConnectChooseFromList  ,NodeVisualizer::onNodeContextMenuConnectChooseFromList)
+		EVT_MENU        (NodeVisualizer_ContextMenuID::GraphSelectAll             ,NodeVisualizer::onGraphContextMenuSelectAll)
 	wxEND_EVENT_TABLE()
 
 	NodeVisualizer::NodeVisualizer(wxFrame* parent,NodeStatus& nodeStatus) : GLPane(parent),mouseDrag(false),mouseDragInitiationDistance(8),x(0.0f),y(0.0f),scale(1.0f),minScale(1/16),maxScale(128),nodeStatus(nodeStatus){
@@ -123,12 +124,11 @@ namespace GraphStructure{
 	
 		//If clicked on node
 		auto node = nodeStatus.getNodeAt(mouseClickPos);
-		if(node)
+		if(node){
 			PopupMenu(contextMenuNode);
-		else
-			PopupMenu(contextMenuGraph);
-
-		event.Skip();
+		}else{
+			event.Skip();
+		}
 	}
 
 	void NodeVisualizer::onMouseRightUp(wxMouseEvent& event){
@@ -154,8 +154,7 @@ namespace GraphStructure{
 	void NodeVisualizer::onKeyDown(wxKeyEvent& event){
 		switch(event.GetKeyCode()){
 			case WXK_SPACE:
-				nodeStatus.getSelectedNodes().front()->connections.push_back(Edge(*nodeStatus.getSelectedNodes().back()));
-				Refresh();
+				nodeStatus.connect(*nodeStatus.getSelectedNodes().front(),Edge(*nodeStatus.getSelectedNodes().back()));
 				break;
 
 			case WXK_DELETE:
@@ -230,6 +229,7 @@ namespace GraphStructure{
 	}
 
 	void NodeVisualizer::onContextMenu(wxContextMenuEvent& event){
+		PopupMenu(contextMenuGraph);
 		event.Skip();
 	}
 
@@ -247,6 +247,10 @@ namespace GraphStructure{
 
 	void NodeVisualizer::onNodeContextMenuConnectChooseFromList(wxCommandEvent& event){
 		std::cout<<"CONNECT CHOOSE FROM LIST"<<std::endl;
+	}
+
+	void NodeVisualizer::onGraphContextMenuSelectAll(wxCommandEvent& event){
+		nodeStatus.selectNodes();
 	}
 
 	void NodeVisualizer::render(wxPaintEvent& event){

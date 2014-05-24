@@ -28,7 +28,7 @@ namespace GraphStructure{
 		);
 		menu_file->Append(
 			static_cast<int>(Window_MenuID::FileOpen),
-			wxT("&Open\tCtrl-O"),
+			wxT("&Open...\tCtrl-O"),
 			wxT("Open graph from file")
 		);
 		menu_file->Append(

@@ -135,6 +135,7 @@ namespace GraphStructure{
 		void onNodeContextMenuConnectToThisFromSelect(wxCommandEvent& event);
 		void onNodeContextMenuConnectToSelectFromThis(wxCommandEvent& event);
 		void onNodeContextMenuConnectChooseFromList(wxCommandEvent& event);
+		void onGraphContextMenuSelectAll(wxCommandEvent& event);
 
 		void moveView(float x,float y);
 

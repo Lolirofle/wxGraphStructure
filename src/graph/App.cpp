@@ -57,8 +57,8 @@ namespace GraphStructure{
 		views.nodeVisualizer->Refresh();
 	}
 
-	void App::connect(Node& from,Node& to){
-		NodeStatus::connect(from,to);
+	void App::connect(Node& from,Edge edge){
+		NodeStatus::connect(from,edge);
 		views.nodeVisualizer->Refresh();
 	}
 }

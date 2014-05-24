@@ -8,6 +8,7 @@
 
 namespace GraphStructure{
 	class Node;
+	class Edge;
 
 	class App : public wxApp , public NodeStatus{
 	public:
@@ -23,7 +24,7 @@ namespace GraphStructure{
 		virtual void addNode(Node node);
 		virtual void removeNode(const Node* node);
 		virtual void removeAllNodes();
-		virtual void connect(Node& from,Node& to);
+		virtual void connect(Node& from,Edge edge);
 	};
 }
 
