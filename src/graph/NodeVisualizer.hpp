@@ -47,22 +47,26 @@ namespace GraphStructure{
 		EMPTYSPACE
 	};
 
-	namespace NodeVisualizer_ContextMenuID{enum{
+	namespace NodeVisualizer_NodeContextMenuID{enum{
 		Unknown = 1,
 
-		NodeRemove,
-		NodeConnectToThisFromSelect,
-		NodeConnectToSelectFromThis,
-		NodeConnectChooseFromList,
-		NodeProperties,
-		
-		GraphAddNode,
-		GraphCopy,
-		GraphCut,
-		GraphPaste,
-		GraphRemove,
-		GraphSelectAll,
-		GraphProperties
+		Remove,
+		ConnectToThisFromSelect,
+		ConnectToSelectFromThis,
+		ConnectChooseFromList,
+		Properties,
+	};}
+
+	namespace NodeVisualizer_GraphContextMenuID{enum{
+		Unknown = 1,
+
+		AddNode,
+		Copy,
+		Cut,
+		Paste,
+		Remove,
+		SelectAll,
+		Properties
 	};}
 
 	enum class NodeVisualizer_MouseReleaseType{
@@ -131,11 +135,8 @@ namespace GraphStructure{
 		void onKeyDown(wxKeyEvent& event);
 		void onKeyUp(wxKeyEvent& event);
 		void onContextMenu(wxContextMenuEvent& event);
-		void onNodeContextMenuRemove(wxCommandEvent& event);
-		void onNodeContextMenuConnectToThisFromSelect(wxCommandEvent& event);
-		void onNodeContextMenuConnectToSelectFromThis(wxCommandEvent& event);
-		void onNodeContextMenuConnectChooseFromList(wxCommandEvent& event);
-		void onGraphContextMenuSelectAll(wxCommandEvent& event);
+		void onNodeContextMenu(wxCommandEvent& event);
+		void onGraphContextMenu(wxCommandEvent& event);
 
 		void moveView(float x,float y);
 
